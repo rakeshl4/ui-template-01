@@ -1,0 +1,191 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Brand tokens sourced from nucleusnetwork.com's theme CSS (base.min.css :root
+  block). Full sourcing/derivation notes: docs/brand-tokens.md.
+  Do not hard-code brand hex values anywhere outside this file.
+*/
+:root {
+  /* Primary (brand blue) tonal ramp — anchors are real, rest interpolated */
+  --primary-50: #ebf5fa;
+  --primary-100: #c7e3f0;
+  --primary-200: #a4d0e6;
+  --primary-300: #80bedc;
+  --primary-400: #3397c8;
+  --primary-500: #0175af;
+  --primary-600: #01669d;
+  --primary-700: #01568b;
+  --primary-800: #004779;
+  --primary-900: #003767;
+  --primary-950: #002855;
+
+  /* Secondary (brand green) tonal ramp — anchors are real, rest interpolated */
+  --secondary-50: #d1f8f1;
+  --secondary-100: #a2f0e2;
+  --secondary-200: #74e9d4;
+  --secondary-300: #4dc9a1;
+  --secondary-400: #27a86f;
+  --secondary-500: #00883c;
+  --secondary-600: #007947;
+  --secondary-700: #006a52;
+  --secondary-800: #004d3c;
+  --secondary-900: #003126;
+  --secondary-950: #001410;
+
+  /* Real brand greys + border */
+  --grey-darkest: #333333;
+  --grey-dark: #666666;
+  --grey: #999999;
+  --grey-light: #cccccc;
+  --grey-lighter: #eeeeee;
+  --grey-lightest: #fafafa;
+  --grey-ultralight: #fcfcfc;
+  --brand-border: #bfc9d4;
+
+  /* Off-brand semantic colors (brand has no warning/error hue) */
+  --amber-50: #fffbeb;
+  --amber-200: #fde68a;
+  --amber-500: #f59e0b;
+  --amber-700: #b45309;
+  --red-50: #fef2f2;
+  --red-200: #fecaca;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+
+  /* shadcn/ui semantic tokens, mapped to brand tokens (light = default/primary mode) */
+  --background: #ffffff;
+  --foreground: var(--primary-950);
+  --card: #ffffff;
+  --card-foreground: var(--primary-950);
+  --popover: #ffffff;
+  --popover-foreground: var(--primary-950);
+  --primary: var(--primary-500);
+  --primary-foreground: #ffffff;
+  --secondary: var(--secondary-50);
+  --secondary-foreground: var(--secondary-700);
+  --muted: var(--grey-lightest);
+  --muted-foreground: var(--grey-dark);
+  --accent: var(--primary-50);
+  --accent-foreground: var(--primary-700);
+  --destructive: var(--red-600);
+  --destructive-foreground: #ffffff;
+  --border: var(--brand-border);
+  --input: var(--brand-border);
+  --ring: var(--primary-500);
+  --radius: 1rem;
+}
+
+.dark {
+  --background: var(--primary-950);
+  --foreground: #f5f9fc;
+  --card: var(--primary-900);
+  --card-foreground: #f5f9fc;
+  --popover: var(--primary-900);
+  --popover-foreground: #f5f9fc;
+  /* Lightened for AA legibility on the dark navy brand background (raw
+     primary-500 measures ~2.9:1 on this background and fails); see
+     docs/brand-tokens.md for the full contrast table. */
+  --primary: var(--primary-300);
+  --primary-foreground: var(--primary-950);
+  --secondary: var(--primary-900);
+  --secondary-foreground: var(--secondary-200);
+  --muted: #04305c;
+  --muted-foreground: var(--primary-200);
+  --accent: var(--primary-900);
+  --accent-foreground: var(--primary-200);
+  --destructive: var(--red-600);
+  --destructive-foreground: #ffffff;
+  --border: #045e8c;
+  --input: #045e8c;
+  --ring: var(--primary-300);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Full tonal ramps + off-brand semantics, exposed for badges/status chips */
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-950: var(--primary-950);
+  --color-secondary-50: var(--secondary-50);
+  --color-secondary-100: var(--secondary-100);
+  --color-secondary-200: var(--secondary-200);
+  --color-secondary-300: var(--secondary-300);
+  --color-secondary-400: var(--secondary-400);
+  --color-secondary-500: var(--secondary-500);
+  --color-secondary-600: var(--secondary-600);
+  --color-secondary-700: var(--secondary-700);
+  --color-secondary-800: var(--secondary-800);
+  --color-secondary-900: var(--secondary-900);
+  --color-secondary-950: var(--secondary-950);
+  --color-grey-darkest: var(--grey-darkest);
+  --color-grey-dark: var(--grey-dark);
+  --color-grey: var(--grey);
+  --color-grey-light: var(--grey-light);
+  --color-grey-lighter: var(--grey-lighter);
+  --color-grey-lightest: var(--grey-lightest);
+  --color-amber-50: var(--amber-50);
+  --color-amber-200: var(--amber-200);
+  --color-amber-500: var(--amber-500);
+  --color-amber-700: var(--amber-700);
+  --color-red-50: var(--red-50);
+  --color-red-200: var(--red-200);
+  --color-red-600: var(--red-600);
+  --color-red-700: var(--red-700);
+
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: var(--radius);
+  --radius-lg: 2rem;
+  --radius-full: 99rem;
+
+  --font-sans: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Fraunces', ui-serif, Georgia, serif;
+
+  --shadow-brand: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+}
