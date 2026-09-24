@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { RequestStatusBadge } from '@/features/requests/components/RequestStatusBadge'
-import { formatDate } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
 import type { Request } from '@/features/requests/schema'
 
 export function RequestsTable({ requests }: { requests: Request[] }) {
@@ -24,6 +24,7 @@ export function RequestsTable({ requests }: { requests: Request[] }) {
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
+              <TableHead>Updated</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -44,8 +45,11 @@ export function RequestsTable({ requests }: { requests: Request[] }) {
                 <TableCell>
                   <RequestStatusBadge status={request.status} />
                 </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formatDate(request.createdAt)}
+                <TableCell className="whitespace-nowrap text-muted-foreground">
+                  {formatDateTime(request.createdAt)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-muted-foreground">
+                  {formatDateTime(request.updatedAt)}
                 </TableCell>
               </TableRow>
             ))}
@@ -67,7 +71,7 @@ export function RequestsTable({ requests }: { requests: Request[] }) {
               </div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                 <span className="font-mono">{request.id}</span>
-                <span>{formatDate(request.createdAt)}</span>
+                <span>{formatDateTime(request.createdAt)}</span>
               </div>
             </button>
           </li>

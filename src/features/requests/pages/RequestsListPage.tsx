@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FileQuestion, Plus, RotateCw } from 'lucide-react'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -8,23 +8,27 @@ import { useRequests } from '@/features/requests/api/queries'
 import { RequestsFilters } from '@/features/requests/components/RequestsFilters'
 import { RequestsTable } from '@/features/requests/components/RequestsTable'
 import type { RequestFilters } from '@/features/requests/schema'
+import { filterRequests } from '@/features/requests/utils/filterRequests'
 
 export function RequestsListPage() {
   const [filters, setFilters] = useState<RequestFilters>({ sort: 'createdAt-desc' })
-  const { data: requests, isPending, isError, refetch } = useRequests(filters)
+  const { data: allRequests, isPending, isError, refetch } = useRequests()
+  const requests = useMemo(
+    () => (allRequests ? filterRequests(allRequests, filters) : undefined),
+    [allRequests, filters],
+  )
 
   const hasActiveFilters = Boolean(filters.search || filters.status)
 
   return (
     <div>
       <PageHeader
-        title="Requests"
-        description="Browse, search and track every request submitted across the organisation."
+        title="Protocol Documents"
         actions={
           <Button asChild>
             <Link to="/requests/new">
               <Plus className="size-4" />
-              New request
+              New protocol document
             </Link>
           </Button>
         }
@@ -42,7 +46,7 @@ export function RequestsListPage() {
 
       {isError && (
         <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16 text-center">
-          <p className="text-sm text-muted-foreground">Failed to load requests.</p>
+          <p className="text-sm text-muted-foreground">Failed to load protocol documents.</p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RotateCw className="size-4" />
             Retry
@@ -57,22 +61,10 @@ export function RequestsListPage() {
           </div>
           <div className="space-y-1">
             <p className="font-medium text-foreground">
-              {hasActiveFilters ? 'No requests match your filters' : 'No requests yet'}
+              {hasActiveFilters ? 'No protocol documents match your filters' : 'No protocol documents yet'}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {hasActiveFilters
-                ? 'Try adjusting your search or filters.'
-                : 'Get started by creating your first request.'}
-            </p>
+ 
           </div>
-          {!hasActiveFilters && (
-            <Button asChild size="sm">
-              <Link to="/requests/new">
-                <Plus className="size-4" />
-                New request
-              </Link>
-            </Button>
-          )}
         </div>
       )}
 

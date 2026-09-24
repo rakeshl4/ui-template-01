@@ -14,6 +14,8 @@ export default defineConfig({
       '@': path.resolve(dirname, './src'),
     },
   },
+  // The API's CORS allowlist only includes http://localhost:5173, so fail rather than pick another port.
+  server: { port: 5173, strictPort: true },
   test: {
     environment: 'happy-dom',
     globals: true,

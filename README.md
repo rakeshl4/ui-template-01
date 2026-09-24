@@ -1,6 +1,6 @@
-# Requests
+# SOA Application
 
-A production-quality React app for creating, viewing and tracking requests, styled to the Nucleus Network brand. There is no backend yet — a [Mock Service Worker](https://mswjs.io/) layer stands in for the API during development and in tests, designed to be swapped for a real backend with no changes to components.
+A production-quality React app for creating, viewing and tracking protocol documents, styled to the Nucleus Network brand. There is no backend yet — a [Mock Service Worker](https://mswjs.io/) layer stands in for the API during development and in tests, designed to be swapped for a real backend with no changes to components.
 
 ## Stack
 
@@ -68,10 +68,9 @@ Routes: `/` redirects to `/requests`; `/requests` (list), `/requests/new` (creat
 interface Request {
   id: string
   title: string // 5–120 chars
-  description: string // min 20 chars
-  status: 'Draft' | 'Submitted' | 'In Review' | 'Approved' | 'Rejected'
-  requestedBy: string
-  dueDate?: string // ISO
+  description?: string
+  status: 'Submitted' | 'In Progress' | 'Ready' | 'Approved'
+  // requestedBy: string // commented out until login is implemented
   attachments?: { name: string; size: number }[]
   createdAt: string // ISO
   updatedAt: string // ISO
@@ -80,16 +79,24 @@ interface Request {
 
 Defined in [`src/features/requests/schema.ts`](src/features/requests/schema.ts) as a Zod schema, with a separate, slightly narrower `requestFormSchema` used by the create form (no `id`/`status`/timestamps — those are assigned server-side).
 
-## Swapping MSW for a real API
+## API and mocks
 
-1. Delete the MSW bootstrap in `src/main.tsx` (the `enableMocking()` call and its `import('@/mocks/browser')`).
-2. Point `VITE_API_BASE_URL` (in `.env.development` / `.env.production`) at your real API host.
-3. `src/features/requests/api/requestsApi.ts` already talks to `VITE_API_BASE_URL` via `fetch` — as long as your backend implements the same four endpoints with the same shapes, no other code changes:
-   - `GET /requests?search=&status=&sort=`
-   - `GET /requests/:id`
-   - `POST /requests`
-   - `PATCH /requests/:id`
-4. Delete `src/mocks/` once nothing references it (tests use `src/mocks/server.ts` via `src/test/setup.ts`, so update that too if you remove mocking from tests as well — most teams keep MSW for tests even after wiring a real API for `dev`/`build`).
+By default `npm run dev` talks to the hosted SOA API (`VITE_API_BASE_URL` in `.env.development`; OpenAPI spec at `/openapi/v1.json`, not the Swagger UI page, which is still the Petstore demo). The API's CORS policy must allow the dev origin (`http://localhost:5173`) or browser calls are rejected.
+
+Set `VITE_ENABLE_MOCKS=true` (e.g. in `.env.development.local`) to serve the same routes from MSW instead. Tests always use MSW.
+
+`src/features/requests/api/requestsApi.ts` translates between the API's DTOs (`api/dto.ts`) and the UI models, so components don't see the wire shape:
+
+| UI call | API |
+| --- | --- |
+| list / get request | `GET /api/protocol-docs`, `GET /api/protocol-docs/{id}` |
+| create request | `POST /api/protocol-docs/uploadDocument` (multipart: `Title`, `Description`, `ProtocolPdf`), then `GET` by id |
+| delete request | `DELETE /api/protocol-docs/{id}` (idempotent) |
+| start extraction | `POST /api/protocol-docs/{id}/extract`, then `GET` by id |
+| get extraction | `GET /api/protocol-docs/{id}/results` (404 until extraction has run) |
+| update request, save footnotes | not in the API yet (placeholder `PATCH /api/protocol-docs/{id}`, `PUT /api/protocol-docs/{id}/results/{resultId}`) |
+
+Known gaps: the API returns statuses `Processing`/`Completed` where the UI expects `In Progress`/`Ready`/`Approved` (to be aligned on the API side), has no `updatedAt`, and errors are `{ error, requestId }`.
 
 ## Theming
 

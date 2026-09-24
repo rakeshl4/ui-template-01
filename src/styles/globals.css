@@ -75,7 +75,7 @@
   --border: var(--brand-border);
   --input: var(--brand-border);
   --ring: var(--primary-500);
-  --radius: 1rem;
+  --radius: 0;
 }
 
 .dark {
@@ -162,10 +162,15 @@
   --color-red-600: var(--red-600);
   --color-red-700: var(--red-700);
 
-  --radius-sm: calc(var(--radius) - 0.5rem);
-  --radius-md: var(--radius);
-  --radius-lg: 2rem;
-  --radius-full: 99rem;
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
+  --radius-full: 0;
 
   --font-sans: 'Lato', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Fraunces', ui-serif, Georgia, serif;

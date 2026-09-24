@@ -1,11 +1,10 @@
-export const APP_NAME = 'Requests'
+export const APP_NAME = 'SOA Application'
 
-export const STATUSES = ['Draft', 'Submitted', 'In Review', 'Approved', 'Rejected'] as const
+export const STATUSES = ['Submitted', 'In Progress', 'Ready', 'Approved'] as const
 
 export const STATUS_LABELS: Record<(typeof STATUSES)[number], string> = {
-  Draft: 'Draft',
   Submitted: 'Submitted',
-  'In Review': 'In Review',
+  'In Progress': 'In Progress',
+  Ready: 'Ready',
   Approved: 'Approved',
-  Rejected: 'Rejected',
 }

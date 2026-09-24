@@ -15,7 +15,7 @@ export function NotFoundPage() {
         </p>
       </div>
       <Button asChild>
-        <Link to="/requests">Back to requests</Link>
+        <Link to="/requests">Back to protocol documents</Link>
       </Button>
     </div>
   )

@@ -1,11 +1,10 @@
 import { Check } from 'lucide-react'
+import { STATUSES } from '@/lib/constants'
 import { cn, formatDateTime } from '@/lib/utils'
 import type { Request } from '@/features/requests/schema'
 
-const HAPPY_PATH: Request['status'][] = ['Draft', 'Submitted', 'In Review', 'Approved']
-
 export function StatusTimeline({ request }: { request: Request }) {
-  const steps = request.status === 'Rejected' ? [...HAPPY_PATH.slice(0, 3), 'Rejected' as const] : HAPPY_PATH
+  const steps = STATUSES
   const currentIndex = steps.indexOf(request.status)
 
   return (

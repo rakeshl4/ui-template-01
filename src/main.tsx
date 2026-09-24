@@ -13,7 +13,7 @@ import { Providers } from '@/app/providers'
 import { router } from '@/app/router'
 
 async function enableMocking() {
-  if (!import.meta.env.DEV) return
+  if (!import.meta.env.DEV || import.meta.env.VITE_ENABLE_MOCKS !== 'true') return
   const { worker } = await import('@/mocks/browser')
   return worker.start({ onUnhandledRequest: 'bypass' })
 }

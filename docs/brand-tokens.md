@@ -57,7 +57,7 @@ These are **linear RGB interpolations**, not a perceptually-uniform ramp (e.g. O
 
 ### Off-brand semantics (amber, red)
 
-The brand palette has no warning or error hue. `--amber-*` and `--red-*` tokens are standard, off-brand utility colours (Tailwind's amber/red scale) used only for the "In Review" status, "Rejected" status, and form validation error states. These are deliberately **not** derived from the brand ramps.
+The brand palette has no warning or error hue. `--amber-*` and `--red-*` tokens are standard, off-brand utility colours (Tailwind's amber/red scale) used only for the "Ready" status and form validation error states. These are deliberately **not** derived from the brand ramps.
 
 ## Typography
 
@@ -71,12 +71,10 @@ The brand palette has no warning or error hue. `--amber-*` and `--red-*` tokens 
 
 | Token | Value | Source |
 |---|---|---|
-| `--radius` (default) | `1rem` | Real — theme's `--border-radius` |
-| `--radius-lg` | `2rem` | Real — theme's `--border-radius-lg` |
-| `--radius-full` | `99rem` | Real — theme's `--border-radius-max` |
+| `--radius` and all `--radius-*` (xs–4xl, full) | `0` | Deliberate: square corners everywhere, no rounded borders (overrides the real site's `1rem` / `2rem` / `99rem`) |
 | `--shadow-brand` | `0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -1px rgb(0 0 0 / .06)` | Real — theme's `--box-shadow` |
 
-**Deliberate deviation:** the real site's buttons (`.btn`) are unconditionally pill-shaped (`border-radius: var(--border-radius-max)`) regardless of size. shadcn's default `Button` component ships with `rounded-md`. We did **not** change the shared `--radius` token to match (that would make every card/input/dialog pill-shaped, which isn't the real site's pattern — only buttons are pills there). Instead, `src/components/ui/button.tsx`'s base class was hand-edited to `rounded-full` specifically. If shadcn regenerates this file later (`shadcn add button --overwrite`), redo that one edit.
+**Deliberate deviation:** the real site's buttons are pill-shaped and its cards/inputs are rounded. This template uses square corners everywhere: every radius token in `src/styles/globals.css` is `0`, so any `rounded-*` utility (including `rounded-full`) renders square. Don't reintroduce radius values.
 
 ## WCAG AA contrast — calculated, not assumed
 
@@ -105,14 +103,13 @@ The spec only asked for a dark theme if a brand-primary variant passes AA on a d
 
 ## Status colour mapping (a spec deviation, approved during scaffolding)
 
-The original brief's literal status colours (`Submitted` = brand secondary green, `Approved` = green) put two different statuses in the same hue family, distinguished only by shade — hard to tell apart at a glance and unreliable for colour-vision-deficient users. The implemented mapping instead gives green exclusively to `Approved` and moves `Submitted` to brand blue:
+The status set is `Submitted`, `In Progress`, `Ready`, `Approved`. Each gets its own hue so no two statuses share a hue family, with green reserved exclusively for `Approved`:
 
 | Status | Colour | Note |
 |---|---|---|
-| Draft | Neutral grey | No brand hue involved |
-| Submitted | Brand **primary** blue | Reassigned from the spec's literal "brand secondary" to avoid the green/green collision below |
-| In Review | Amber (off-brand) | Brand has no warning hue |
+| Submitted | Neutral grey | No brand hue involved |
+| In Progress | Brand **primary** blue | |
+| Ready | Amber (off-brand) | Brand has no warning hue |
 | Approved | Brand **secondary** green | Kept on-brand — the one unambiguous "success" state |
-| Rejected | Red (off-brand) | Brand has no error hue; shared with form validation styling |
 
 Every badge renders status text plus colour (never colour alone).

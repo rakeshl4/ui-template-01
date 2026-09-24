@@ -1,28 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { THEME_STORAGE_KEY, ThemeContext, type Theme } from '@/components/theme/theme-context'
+import { ThemeContext, type Theme } from '@/components/theme/theme-context'
 
-function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'light'
-  try {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored === 'light' || stored === 'dark') return stored
-  } catch {
-    // localStorage unavailable (private browsing, etc.) — fall back to default
-  }
-  return 'light'
-}
+// The theme is no longer user-selectable: the app always renders in the light theme.
+const FIXED_THEME: Theme = 'light'
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme)
+  const [theme, setThemeState] = useState<Theme>(FIXED_THEME)
 
   useEffect(() => {
-    const root = document.documentElement
-    root.classList.toggle('dark', theme === 'dark')
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-    } catch {
-      // ignore write failures
-    }
+    document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])
 
   const value = useMemo(

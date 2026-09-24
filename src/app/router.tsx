@@ -4,6 +4,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
 import { RequestsListPage } from '@/features/requests/pages/RequestsListPage'
 import { CreateRequestPage } from '@/features/requests/pages/CreateRequestPage'
 import { ViewRequestPage } from '@/features/requests/pages/ViewRequestPage'
+import { SoaResultsPage } from '@/features/requests/pages/SoaResultsPage'
 
 export const router = createBrowserRouter(
   [
@@ -15,6 +16,7 @@ export const router = createBrowserRouter(
         { path: 'requests', element: <RequestsListPage /> },
         { path: 'requests/new', element: <CreateRequestPage /> },
         { path: 'requests/:id', element: <ViewRequestPage /> },
+        { path: 'requests/:id/soa', element: <SoaResultsPage /> },
         { path: '*', element: <NotFoundPage /> },
       ],
     },

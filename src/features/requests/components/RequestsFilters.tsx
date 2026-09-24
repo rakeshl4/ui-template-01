@@ -24,11 +24,11 @@ export function RequestsFilters({ filters, onChange }: RequestsFiltersProps) {
         <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search by title, ID or requester"
+          placeholder="Search by title or ID"
           className="pl-9"
           value={filters.search ?? ''}
           onChange={(e) => onChange({ ...filters, search: e.target.value })}
-          aria-label="Search requests"
+          aria-label="Search protocol documents"
         />
       </div>
 
