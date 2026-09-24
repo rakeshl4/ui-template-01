@@ -71,21 +71,15 @@ export function SoaTableNav({ tables, activeId, dirtyIds, onSelect }: SoaTableNa
                 >
                   {table.index}
                 </span>
-                <span className="min-w-0 flex-1 space-y-0.5">
-                  <span className="flex items-center gap-1.5">
-                    <span className={cn('truncate', active && 'font-medium')}>{table.title}</span>
-                    {dirty && (
-                      <span
-                        className="size-1.5 shrink-0 rounded-full bg-amber-500"
-                        title="Unsaved footnote changes"
-                        aria-label="Unsaved changes"
-                      />
-                    )}
-                  </span>
-                  <span className="text-muted-foreground block text-xs">
-                    {table.pageRange ? `p. ${table.pageRange} · ` : ''}
-                    {table.rowCount}×{table.columnCount}
-                  </span>
+                <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                  <span className={cn('truncate', active && 'font-medium')}>{table.title}</span>
+                  {dirty && (
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-amber-500"
+                      title="Unsaved footnote changes"
+                      aria-label="Unsaved changes"
+                    />
+                  )}
                 </span>
               </button>
             </li>

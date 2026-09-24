@@ -1,8 +1,5 @@
-import { Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import type { SoaFootnote } from '@/features/requests/schema'
-import { reletterFootnotes } from '@/features/requests/utils/footnotes'
 
 interface SoaFootnotesEditorProps {
   tableId: string
@@ -22,10 +19,6 @@ export function SoaFootnotesEditor({
 }: SoaFootnotesEditorProps) {
   function updateText(id: string, text: string) {
     onChange(footnotes.map((f) => (f.id === id ? { ...f, text } : f)))
-  }
-
-  function remove(id: string) {
-    onChange(reletterFootnotes(footnotes.filter((f) => f.id !== id)))
   }
 
   return (
@@ -62,17 +55,6 @@ export function SoaFootnotesEditor({
                   />
                   {invalid && <p className="text-destructive text-xs">Footnote text is required</p>}
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-muted-foreground hover:text-destructive mt-0.5"
-                  aria-label={`Remove footnote ${f.marker}`}
-                  disabled={disabled}
-                  onClick={() => remove(f.id)}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
               </li>
             )
           })}
