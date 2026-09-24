@@ -15,7 +15,7 @@ import type {
   CreateRequestInput,
   Request,
   SoaExtraction,
-  SoaFootnote,
+  SoaTable,
 } from '@/features/requests/schema'
 
 export const EXTRACTION_POLL_INTERVAL_MS = 1500
@@ -69,7 +69,7 @@ export function useRequest(
 
     queryClient.invalidateQueries({ queryKey: requestKeys.extraction(id) })
     queryClient.invalidateQueries({ queryKey: requestKeys.lists() })
-    if (request.status === 'Ready') onCompleteRef.current?.(request)
+    if (request.status === 'Ready' || request.status === 'Failed') onCompleteRef.current?.(request)
   }, [id, request, queryClient])
 
   return query
@@ -140,8 +140,7 @@ export function useExtraction(id: string | undefined, { enabled = true } = {}) {
 export function useUpdateTable(id: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ tableId, footnotes }: { tableId: string; footnotes: SoaFootnote[] }) =>
-      updateTable(id, tableId, { footnotes }),
+    mutationFn: (table: SoaTable) => updateTable(id, table),
     onSuccess: (updatedTable) => {
       queryClient.setQueryData<SoaExtraction>(requestKeys.extraction(id), (prev) =>
         prev

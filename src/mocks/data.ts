@@ -1,10 +1,9 @@
-import type {
-  Request,
-  SoaExtraction,
-  SoaFootnote,
-  SoaTable,
-} from '@/features/requests/schema'
-import { footnoteMarker } from '@/features/requests/utils/footnotes'
+import type { SoaTableExtractionResultDto } from '@/features/requests/api/dto'
+import type { Request } from '@/features/requests/schema'
+import sample from '@/mocks/fixtures/soa-sample.json'
+
+// A real record from the database, as returned by the extraction endpoint.
+const sampleRecord = sample as SoaTableExtractionResultDto
 
 function daysAgo(days: number): string {
   const d = new Date()
@@ -107,6 +106,18 @@ export const requests: Request[] = [
     createdAt: daysAgo(2),
     updatedAt: daysAgo(2),
   },
+  {
+    id: 'REQ-1011',
+    title: 'HEP-8120 Phase II Hepatitis B Protocol v1.0 (scanned copy)',
+    description:
+      'Scanned copy of the protocol received from the sponsor. A searchable PDF has been requested.',
+    status: 'Failed',
+    error:
+      'No Schedule of Activities table could be detected in HEP-8120_Protocol_v1.0_scan.pdf. The document has no text layer; upload a searchable PDF and try again.',
+    attachments: [{ name: 'HEP-8120_Protocol_v1.0_scan.pdf', size: 8734201 }],
+    createdAt: daysAgo(5),
+    updatedAt: daysAgo(4),
+  },
 ]
 
 /** How long the mock extraction keeps a request 'In Progress'. Tests shorten this. */
@@ -114,76 +125,25 @@ export const extractionTiming = {
   durationMs: 7000,
 }
 
-const SAMPLE_TABLES: Omit<SoaTable, 'id' | 'index'>[] = [
-  {
-    title: 'Screening and Baseline',
-    pageRange: '38–39',
-    rowCount: 18,
-    columnCount: 4,
-    footnotes: [
-      { id: '', marker: '', text: 'Screening assessments must be completed within 28 days prior to Day 1.' },
-      { id: '', marker: '', text: 'Informed consent must be obtained before any study-specific procedure.' },
-      { id: '', marker: '', text: 'Pregnancy test for women of childbearing potential only.' },
-    ],
-  },
-  {
-    title: 'Treatment Period',
-    pageRange: '40–43',
-    rowCount: 24,
-    columnCount: 12,
-    footnotes: [
-      { id: '', marker: '', text: 'Visit window of ±3 days applies to all treatment visits after Day 1.' },
-      { id: '', marker: '', text: 'Vital signs collected pre-dose and 30 minutes post-dose.' },
-      { id: '', marker: '', text: 'ECG in triplicate, at least 1 minute apart.' },
-      { id: '', marker: '', text: 'Tumour assessment every 6 weeks (±7 days) regardless of dose delays.' },
-    ],
-  },
-  {
-    title: 'Pharmacokinetic Sampling',
-    pageRange: '44',
-    rowCount: 9,
-    columnCount: 8,
-    footnotes: [
-      { id: '', marker: '', text: 'Pre-dose sample to be taken within 60 minutes before dosing.' },
-      { id: '', marker: '', text: 'Record actual sampling times in the eCRF.' },
-    ],
-  },
-  {
-    title: 'End of Treatment and Follow-up',
-    pageRange: '45–46',
-    rowCount: 14,
-    columnCount: 5,
-    footnotes: [
-      { id: '', marker: '', text: 'Safety follow-up visit 30 days (±7 days) after the last dose.' },
-      { id: '', marker: '', text: 'Survival follow-up by telephone every 12 weeks.' },
-    ],
-  },
-]
-
-export function buildExtraction(requestId: string, jobId: string, extractedAt: string): SoaExtraction {
-  return {
-    requestId,
-    jobId,
-    extractedAt,
-    tables: SAMPLE_TABLES.map((table, i) => {
-      const tableId = `${requestId}-T${i + 1}`
-      return {
-        ...table,
-        id: tableId,
-        index: i + 1,
-        footnotes: table.footnotes.map<SoaFootnote>((f, j) => ({
-          ...f,
-          id: `${tableId}-F${j + 1}`,
-          marker: footnoteMarker(j),
-        })),
-      }
-    }),
-  }
+/** One extraction run, as the API stores it: a record per table. Returns the sample record. */
+export function buildExtraction(
+  requestId: string,
+  extractedAt: string,
+): SoaTableExtractionResultDto[] {
+  return [
+    {
+      ...structuredClone(sampleRecord),
+      id: `${requestId}-T1`,
+      requestId,
+      documentId: `${requestId}-D1`,
+      extractedDate: extractedAt,
+    },
+  ]
 }
 
 /** Mock-only bookkeeping: when each running extraction started. The API exposes just the request status. */
-export const extractionStarts = new Map<string, { runId: string; startedAt: number }>()
+export const extractionStarts = new Map<string, { startedAt: number }>()
 
-export const extractions = new Map<string, SoaExtraction>([
-  ['REQ-1001', buildExtraction('REQ-1001', 'JOB-1001-1', daysAgo(3))],
+export const extractions = new Map<string, SoaTableExtractionResultDto[]>([
+  ['REQ-1001', buildExtraction('REQ-1001', daysAgo(3))],
 ])

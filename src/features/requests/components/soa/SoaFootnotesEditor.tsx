@@ -1,8 +1,12 @@
+import { useMemo } from 'react'
 import { Textarea } from '@/components/ui/textarea'
-import type { SoaFootnote } from '@/features/requests/schema'
+import type { SoaFootnote, SoaProcedure } from '@/features/requests/schema'
+import { footnoteDomId, procedureDisplayName } from '@/features/requests/utils/footnotes'
 
 interface SoaFootnotesEditorProps {
   tableId: string
+  /** Used to name the activities each footnote applies to. */
+  procedures: SoaProcedure[]
   footnotes: SoaFootnote[]
   onChange: (footnotes: SoaFootnote[]) => void
   showErrors?: boolean
@@ -12,11 +16,27 @@ interface SoaFootnotesEditorProps {
 /** Controlled editor: drafts live in the parent so they survive switching between tables. */
 export function SoaFootnotesEditor({
   tableId,
+  procedures,
   footnotes,
   onChange,
   showErrors = false,
   disabled = false,
 }: SoaFootnotesEditorProps) {
+  const procedureNames = useMemo(() => {
+    const markersByProcedure = new Map<string, string[]>()
+    for (const f of footnotes) {
+      for (const id of f.procedureIds) {
+        markersByProcedure.set(id, [...(markersByProcedure.get(id) ?? []), f.id])
+      }
+    }
+    return new Map(
+      procedures.map((p) => [
+        p.id,
+        procedureDisplayName(p.name, markersByProcedure.get(p.id) ?? []),
+      ]),
+    )
+  }, [procedures, footnotes])
+
   function updateText(id: string, text: string) {
     onChange(footnotes.map((f) => (f.id === id ? { ...f, text } : f)))
   }
@@ -35,8 +55,15 @@ export function SoaFootnotesEditor({
         <ol className="space-y-2">
           {footnotes.map((f) => {
             const invalid = showErrors && f.text.trim().length === 0
+            const appliesTo = f.procedureIds
+              .map((id) => procedureNames.get(id))
+              .filter((name): name is string => Boolean(name))
             return (
-              <li key={f.id} className="flex items-start gap-2">
+              <li
+                key={f.id}
+                id={footnoteDomId(tableId, f.id)}
+                className="flex scroll-mt-24 items-start gap-2"
+              >
                 <span
                   className="bg-secondary text-secondary-foreground mt-1.5 flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md px-1.5 text-xs font-semibold"
                   aria-hidden="true"
@@ -54,6 +81,11 @@ export function SoaFootnotesEditor({
                     onChange={(e) => updateText(f.id, e.target.value)}
                   />
                   {invalid && <p className="text-destructive text-xs">Footnote text is required</p>}
+                  {appliesTo.length > 0 && (
+                    <p className="text-muted-foreground text-xs">
+                      Applies to: {appliesTo.join(', ')}
+                    </p>
+                  )}
                 </div>
               </li>
             )

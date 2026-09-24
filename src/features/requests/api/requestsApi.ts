@@ -3,16 +3,19 @@ import type {
   ErrorResponseDto,
   SoaExtractionRequestDto,
   SoaExtractionResponseDto,
+  SoaTableDto,
   SoaTableExtractionResultDto,
+  SoaVisitDto,
   UploadDocumentResponseDto,
 } from '@/features/requests/api/dto'
 import type {
   CreateRequestInput,
   Request,
   SoaExtraction,
-  SoaFootnote,
   SoaTable,
+  SoaVisit,
 } from '@/features/requests/schema'
+import { cellKey, normalizeSchedule, parseCellKey } from '@/features/requests/utils/schedule'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 const RESOURCE = `${BASE_URL}/api/protocol-docs`
@@ -30,8 +33,7 @@ export class ApiError extends Error {
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as
-      | (Partial<ErrorResponseDto> & { message?: string })
-      | null
+      (Partial<ErrorResponseDto> & { message?: string }) | null
     throw new ApiError(
       body?.error ?? body?.message ?? `Request failed with status ${res.status}`,
       res.status,
@@ -52,6 +54,7 @@ function toRequest(dto: SoaExtractionRequestDto): Request {
     description: dto.description ?? undefined,
     // The API status vocabulary is being aligned with the UI's; passed through as-is.
     status: dto.status as Request['status'],
+    error: dto.error ?? undefined,
     attachments: (dto.documents ?? []).map((d: DocumentInfoDto) => ({
       name: d.name,
       size: Number(d.size),
@@ -65,6 +68,78 @@ function toRequest(dto: SoaExtractionRequestDto): Request {
   }
 }
 
+function hasId<T extends { id: string }>(item: T): boolean {
+  return item.id.length > 0
+}
+
+function toVisit(v: SoaVisitDto): SoaVisit {
+  return {
+    id: v.visitId ?? '',
+    phase: v.phase ?? undefined,
+    period: v.period ?? undefined,
+    week: v.week ?? undefined,
+    studyDay: v.studyDay ?? undefined,
+    hour: v.hour ?? undefined,
+    visitWindow: v.visitWindow ?? undefined,
+  }
+}
+
+/** Maps one stored record to a grid. `index` is its 1-based position in the extraction. */
+function toSoaTable(record: SoaTableExtractionResultDto, index: number): SoaTable {
+  const table = record.soaTable ?? {}
+  const visits = (table.visits ?? []).map(toVisit).filter(hasId)
+  const procedures = (table.procedures ?? [])
+    .map((p) => ({ id: p.procedureId ?? '', name: p.name ?? '' }))
+    .filter(hasId)
+  const visitIds = new Set(visits.map((v) => v.id))
+  const procedureIds = new Set(procedures.map((p) => p.id))
+
+  return {
+    id: record.id,
+    index,
+    title: table.caption?.trim() || `Table ${index}`,
+    rowCount: procedures.length,
+    columnCount: visits.length,
+    visits,
+    procedures,
+    // Cells pointing at a visit or procedure that isn't in the table can't be shown; drop them.
+    scheduleItems: normalizeSchedule(
+      (table.scheduleItems ?? [])
+        .filter((s) => visitIds.has(s.visitId ?? '') && procedureIds.has(s.procedureId ?? ''))
+        .map((s) => cellKey(s.visitId!, s.procedureId!)),
+    ),
+    footnotes: (table.footnotes ?? []).map((f, j) => ({
+      id: f.footnoteId ?? String(j + 1),
+      marker: f.footnoteId ?? String(j + 1),
+      text: f.text ?? '',
+      procedureIds: f.procedureIds ?? [],
+    })),
+  }
+}
+
+/** The body for saving a grid: the whole soaTable, with the user's cell and footnote edits. */
+export function toSoaTableDto(table: SoaTable): SoaTableDto {
+  return {
+    caption: table.title,
+    visits: table.visits.map((v) => ({
+      visitId: v.id,
+      phase: v.phase ?? null,
+      period: v.period ?? null,
+      week: v.week ?? null,
+      studyDay: v.studyDay ?? null,
+      hour: v.hour ?? null,
+      visitWindow: v.visitWindow ?? null,
+    })),
+    procedures: table.procedures.map((p) => ({ procedureId: p.id, name: p.name })),
+    scheduleItems: table.scheduleItems.map(parseCellKey),
+    footnotes: table.footnotes.map((f) => ({
+      footnoteId: f.id,
+      procedureIds: f.procedureIds,
+      text: f.text,
+    })),
+  }
+}
+
 function toExtraction(requestId: string, results: SoaTableExtractionResultDto[]): SoaExtraction {
   const withTables = results.filter((r) => r.soaTable)
   return {
@@ -75,21 +150,7 @@ function toExtraction(requestId: string, results: SoaTableExtractionResultDto[])
       withTables.map((r) => r.extractedDate),
       '',
     ),
-    tables: withTables.map((r, i) => {
-      const table = r.soaTable!
-      return {
-        id: r.id,
-        index: i + 1,
-        title: table.caption?.trim() || `Table ${i + 1}`,
-        rowCount: table.procedures?.length ?? 0,
-        columnCount: table.visits?.length ?? 0,
-        footnotes: (table.footnotes ?? []).map((f, j) => ({
-          id: f.footnoteId ?? String(j),
-          marker: f.footnoteId ?? String(j + 1),
-          text: f.text ?? '',
-        })),
-      }
-    }),
+    tables: withTables.map((r, i) => toSoaTable(r, i + 1)),
   }
 }
 
@@ -152,24 +213,20 @@ export async function approveRequest(requestId: string): Promise<Request> {
 }
 
 export async function getExtraction(requestId: string): Promise<SoaExtraction> {
-  const res = await fetch(`${RESOURCE}/${encodeURIComponent(requestId)}/results`)
+  const res = await fetch(`${RESOURCE}/${encodeURIComponent(requestId)}/extraction`)
   return toExtraction(requestId, await handleResponse<SoaTableExtractionResultDto[]>(res))
 }
 
-// TODO: the API has no endpoint for saving edited footnotes yet; the path below is a placeholder.
-// When it exists, the body should also carry each footnote's procedureIds, which the UI model drops.
-export async function updateTable(
-  requestId: string,
-  tableId: string,
-  input: { footnotes: SoaFootnote[] },
-): Promise<SoaTable> {
+// TODO: the API has no endpoint for saving an edited table yet; the path below is a placeholder.
+// Sends the whole soaTable; the server replaces the stored one and returns the updated record.
+export async function updateTable(requestId: string, table: SoaTable): Promise<SoaTable> {
   const res = await fetch(
-    `${RESOURCE}/${encodeURIComponent(requestId)}/results/${encodeURIComponent(tableId)}`,
+    `${RESOURCE}/${encodeURIComponent(requestId)}/extraction/${encodeURIComponent(table.id)}`,
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify(toSoaTableDto(table)),
     },
   )
-  return handleResponse<SoaTable>(res)
+  return toSoaTable(await handleResponse<SoaTableExtractionResultDto>(res), table.index)
 }

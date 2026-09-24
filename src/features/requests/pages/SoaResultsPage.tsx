@@ -15,10 +15,29 @@ import { ApiError } from '@/features/requests/api/requestsApi'
 import { UnsavedChangesGuard } from '@/features/requests/components/UnsavedChangesGuard'
 import { SoaTableNav, SoaTableSelect } from '@/features/requests/components/soa/SoaTableNav'
 import { SoaTableView } from '@/features/requests/components/soa/SoaTableView'
-import type { SoaFootnote } from '@/features/requests/schema'
+import type { SoaFootnote, SoaTable } from '@/features/requests/schema'
 import { footnotesEqual } from '@/features/requests/utils/footnotes'
+import { scheduleEqual } from '@/features/requests/utils/schedule'
 
-type Drafts = Record<string, SoaFootnote[]>
+/** The editable parts of a table: which cells are scheduled, and footnote text. */
+interface TableDraft {
+  footnotes: SoaFootnote[]
+  scheduleItems: string[]
+}
+
+type Drafts = Record<string, TableDraft>
+
+function draftOf(table: SoaTable, drafts: Drafts): TableDraft {
+  return drafts[table.id] ?? { footnotes: table.footnotes, scheduleItems: table.scheduleItems }
+}
+
+function isDirty(table: SoaTable, draft: TableDraft | undefined): boolean {
+  return (
+    draft !== undefined &&
+    (!footnotesEqual(draft.footnotes, table.footnotes) ||
+      !scheduleEqual(draft.scheduleItems, table.scheduleItems))
+  )
+}
 
 function withoutKey(drafts: Drafts, key: string): Drafts {
   const next = { ...drafts }
@@ -70,7 +89,7 @@ export function SoaResultsPage() {
   const extraction = extractionQuery.data
   const tables = useMemo(() => extraction?.tables ?? [], [extraction])
 
-  // Unsaved footnote edits per table. Reset whenever a new extraction replaces the tables.
+  // Unsaved grid and footnote edits per table. Reset whenever a new extraction replaces the tables.
   const [drafts, setDrafts] = useState<Drafts>({})
   const [showErrorsFor, setShowErrorsFor] = useState<Set<string>>(new Set())
   const [savingIds, setSavingIds] = useState<Set<string>>(new Set())
@@ -82,8 +101,7 @@ export function SoaResultsPage() {
   const dirtyIds = useMemo(() => {
     const ids = new Set<string>()
     for (const table of tables) {
-      const draft = drafts[table.id]
-      if (draft && !footnotesEqual(draft, table.footnotes)) ids.add(table.id)
+      if (isDirty(table, drafts[table.id])) ids.add(table.id)
     }
     return ids
   }, [drafts, tables])
@@ -133,14 +151,15 @@ export function SoaResultsPage() {
 
   async function saveTable(tableId: string): Promise<boolean> {
     const draft = drafts[tableId]
-    if (!draft) return true
-    if (draft.some((f) => f.text.trim().length === 0)) {
+    const table = tables.find((t) => t.id === tableId)
+    if (!draft || !table) return true
+    if (draft.footnotes.some((f) => f.text.trim().length === 0)) {
       setShowErrorsFor((prev) => new Set(prev).add(tableId))
       return false
     }
     setSavingIds((prev) => new Set(prev).add(tableId))
     try {
-      await updateTableMutation.mutateAsync({ tableId, footnotes: draft })
+      await updateTableMutation.mutateAsync({ ...table, ...draft })
       setDrafts((prev) => withoutKey(prev, tableId))
       setShowErrorsFor((prev) => {
         const next = new Set(prev)
@@ -149,7 +168,7 @@ export function SoaResultsPage() {
       })
       return true
     } catch (err) {
-      toast.error('Could not save footnotes', {
+      toast.error('Could not save changes', {
         description: err instanceof Error ? err.message : undefined,
       })
       return false
@@ -167,7 +186,7 @@ export function SoaResultsPage() {
     const results = await Promise.all(ids.map((tableId) => saveTable(tableId)))
     const failed = ids.filter((_, i) => !results[i])
     if (failed.length === 0) {
-      toast.success(`Footnotes saved for ${ids.length} table${ids.length === 1 ? '' : 's'}`)
+      toast.success(`Changes saved for ${ids.length} table${ids.length === 1 ? '' : 's'}`)
     } else {
       toast.error(`${failed.length} table${failed.length === 1 ? '' : 's'} could not be saved`, {
         description: 'Check for empty footnotes.',
@@ -296,13 +315,26 @@ export function SoaResultsPage() {
             table={activeTable}
             position={activeIndex + 1}
             total={tables.length}
-            footnotes={drafts[activeTable.id] ?? activeTable.footnotes}
+            footnotes={draftOf(activeTable, drafts).footnotes}
+            scheduleItems={draftOf(activeTable, drafts).scheduleItems}
             dirty={dirtyIds.has(activeTable.id)}
             saving={savingIds.has(activeTable.id)}
             locked={running}
             showErrors={showErrorsFor.has(activeTable.id)}
             onFootnotesChange={(footnotes) =>
-              setDrafts((prev) => ({ ...prev, [activeTable.id]: footnotes }))
+              setDrafts((prev) => ({
+                ...prev,
+                [activeTable.id]: { ...draftOf(activeTable, prev), footnotes },
+              }))
+            }
+            onScheduleChange={(update) =>
+              setDrafts((prev) => {
+                const current = draftOf(activeTable, prev)
+                return {
+                  ...prev,
+                  [activeTable.id]: { ...current, scheduleItems: update(current.scheduleItems) },
+                }
+              })
             }
             onPrev={() => goTo(activeIndex - 1)}
             onNext={() => goTo(activeIndex + 1)}

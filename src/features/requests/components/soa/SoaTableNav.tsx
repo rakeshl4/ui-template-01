@@ -76,7 +76,7 @@ export function SoaTableNav({ tables, activeId, dirtyIds, onSelect }: SoaTableNa
                   {dirty && (
                     <span
                       className="size-1.5 shrink-0 rounded-full bg-amber-500"
-                      title="Unsaved footnote changes"
+                      title="Unsaved changes"
                       aria-label="Unsaved changes"
                     />
                   )}

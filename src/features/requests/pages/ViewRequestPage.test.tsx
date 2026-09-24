@@ -33,7 +33,7 @@ describe('ViewRequestPage', () => {
     })
 
     expect(
-      await screen.findByText(/4 tables extracted/i, {}, { timeout: 4000 }),
+      await screen.findByText(/1 table extracted/i, {}, { timeout: 4000 }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /view results/i })).toHaveAttribute(
       'href',

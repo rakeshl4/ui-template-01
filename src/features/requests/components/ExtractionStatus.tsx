@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, FileText, Loader2, Table2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, FileText, Loader2, Table2, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { isExtracting, useExtraction, useRequest } from '@/features/requests/api/queries'
@@ -10,7 +10,13 @@ import { soaResultsPath } from '@/features/requests/utils/paths'
 export function ExtractionStatus({ request: initial }: { request: Request }) {
   const navigate = useNavigate()
   const { data } = useRequest(initial.id, {
-    onExtractionComplete: () => {
+    onExtractionComplete: (completed) => {
+      if (completed.status === 'Failed') {
+        toast.error('Extraction failed', {
+          description: completed.error ?? 'The Schedule of Assessments could not be extracted.',
+        })
+        return
+      }
       toast.success('Extraction complete', {
         description: 'Schedule of Assessments tables are ready to review.',
         action: { label: 'View', onClick: () => navigate(soaResultsPath(initial.id)) },
@@ -33,6 +39,24 @@ export function ExtractionStatus({ request: initial }: { request: Request }) {
     )
   }
 
+  if (request.status === 'Failed') {
+    return (
+      <div
+        className="border-red-200 bg-red-50 space-y-1 rounded-md border p-3 text-sm"
+        role="alert"
+      >
+        <p className="text-red-700 flex items-center gap-2 font-medium">
+          <XCircle className="size-4 shrink-0" />
+          Extraction failed
+        </p>
+        <p className="text-red-700 pl-6 break-words">
+          {request.error ?? 'No error details were returned.'}
+        </p>
+        <p className="text-muted-foreground pl-6">Start the extraction again to retry.</p>
+      </div>
+    )
+  }
+
   if (!hasResults) {
     return <p className="text-muted-foreground text-sm">No extraction has been run yet.</p>
   }
@@ -42,7 +66,9 @@ export function ExtractionStatus({ request: initial }: { request: Request }) {
       <p className="text-foreground flex items-center gap-2">
         <CheckCircle2 className="text-primary size-4" />
         <span>
-          {extraction ? `${extraction.tables.length} tables extracted` : 'Extraction complete'}
+          {extraction
+            ? `${extraction.tables.length} table${extraction.tables.length === 1 ? '' : 's'} extracted`
+            : 'Extraction complete'}
         </span>
       </p>
       {extraction && (

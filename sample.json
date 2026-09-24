@@ -1,0 +1,452 @@
+{
+    "documentId": "a8f3a436-09f7-485d-92db-ddf6f5c84c06",
+    "extractedDate": "2026-09-24T03:36:23.1368311+00:00",
+    "soaTable": {
+        "caption": "Table 22-A Schedule of Assessments for Part A (Single Ascending Dose) Healthy Participants",
+        "visits": [
+            {
+                "visitId": "VISIT_-28_TO_-2",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "-28 to -2",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_-1",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "-1",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_DAY_1",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "1",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_DAY_2",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "2",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_DAY_3",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "3",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_DAY_4",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "4",
+                "hour": null,
+                "visitWindow": null
+            },
+            {
+                "visitId": "VISIT_DAY_7",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "7",
+                "hour": null,
+                "visitWindow": "+1"
+            },
+            {
+                "visitId": "VISIT_DAY_14",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "14",
+                "hour": null,
+                "visitWindow": "+1"
+            },
+            {
+                "visitId": "VISIT_DAY_28",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "28",
+                "hour": null,
+                "visitWindow": "±3"
+            },
+            {
+                "visitId": "VISIT_DAY_42",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "42",
+                "hour": null,
+                "visitWindow": "+3"
+            },
+            {
+                "visitId": "VISIT_DAY_56",
+                "phase": null,
+                "period": null,
+                "week": null,
+                "studyDay": "56",
+                "hour": null,
+                "visitWindow": "±3"
+            }
+        ],
+        "procedures": [
+            {
+                "procedureId": "PROC_INFORMED_CONSENT",
+                "name": "Informed consent"
+            },
+            {
+                "procedureId": "PROC_INCLUSION_EXCLUSION_CRITERIA",
+                "name": "Inclusion/exclusion criteria"
+            },
+            {
+                "procedureId": "PROC_DEMOGRAPHICS",
+                "name": "Demographics"
+            },
+            {
+                "procedureId": "PROC_MEDICAL_HISTORY",
+                "name": "Medical history"
+            },
+            {
+                "procedureId": "PROC_SURGICAL_HISTORY",
+                "name": "Surgical history"
+            },
+            {
+                "procedureId": "PROC_PRIOR_CONCOMITANT_MEDICATIONS_3",
+                "name": "Prior/concomitant medications3"
+            },
+            {
+                "procedureId": "PROC_BODY_WEIGHT",
+                "name": "Body weight"
+            },
+            {
+                "procedureId": "PROC_HEIGHT_BMI_ABDOMINAL_GIRTH_4",
+                "name": "Height, BMI, abdominal girth4"
+            },
+            {
+                "procedureId": "PROC_MRI_PDFF_5",
+                "name": "MRI-PDFF5"
+            },
+            {
+                "procedureId": "PROC_SERUM_PREGNANCY_TEST_6",
+                "name": "Serum pregnancy test6"
+            },
+            {
+                "procedureId": "PROC_URINE_PREGNANCY_TEST_7",
+                "name": "Urine pregnancy test7"
+            },
+            {
+                "procedureId": "PROC_SEROLOGY_LKM_ANTIBODY_8",
+                "name": "Serology and LKM Autoantibody 8"
+            },
+            {
+                "procedureId": "PROC_FSH_9",
+                "name": "FSH9"
+            },
+            {
+                "procedureId": "PROC_COVID19_TEST_10",
+                "name": "COVID-19 test 10"
+            },
+            {
+                "procedureId": "PROC_URINE_DRUG_SCREEN_11",
+                "name": "Urine drug screen11"
+            },
+            {
+                "procedureId": "PROC_ALCOHOL_BREATH_TEST_12",
+                "name": "Alcohol breath test12"
+            },
+            {
+                "procedureId": "PROC_FULL_PHYSICAL_EXAM_13",
+                "name": "Full physical examination13"
+            },
+            {
+                "procedureId": "PROC_SYMPTOM_DIRECTED_PHYSICAL_EXAM_13",
+                "name": "Symptom-directed physical examination13"
+            },
+            {
+                "procedureId": "PROC_LOCAL_TOLERABILITY_14",
+                "name": "Local tolerability assessment 14"
+            },
+            {
+                "procedureId": "PROC_VITAL_SIGNS_15",
+                "name": "Vital signs15"
+            },
+            {
+                "procedureId": "PROC_TELEMETRY_16",
+                "name": "Telemetry16"
+            },
+            {
+                "procedureId": "PROC_12_LEAD_ECG_17",
+                "name": "12-lead ECG17"
+            },
+            {
+                "procedureId": "PROC_SAFETY_BLOOD_SAMPLES_18",
+                "name": "Safety blood samples18"
+            },
+            {
+                "procedureId": "PROC_URINALYSIS_19",
+                "name": "Urinalysis19"
+            },
+            {
+                "procedureId": "PROC_RANDOMIZATION_20",
+                "name": "Randomization20"
+            },
+            {
+                "procedureId": "PROC_STUDY_DRUG_ADMINISTRATION_21",
+                "name": "Study drug administration21"
+            },
+            {
+                "procedureId": "PROC_BLOOD_SAMPLES_PK_22",
+                "name": "Blood samples for PK22"
+            },
+            {
+                "procedureId": "PROC_BLOOD_SAMPLES_IMMUNOGENICITY_23",
+                "name": "Blood samples for immunogenicity23"
+            },
+            {
+                "procedureId": "PROC_BLOOD_SAMPLES_INFLAMMATORY_MARKERS_24",
+                "name": "Blood samples for inflammatory markers24"
+            },
+            {
+                "procedureId": "PROC_BLOOD_SAMPLES_METABOLIC_PANEL_25",
+                "name": "Blood samples for metabolic panel25"
+            },
+            {
+                "procedureId": "PROC_BLOOD_SAMPLES_CYTOKINES_25",
+                "name": "Blood samples for cytokines25"
+            },
+            {
+                "procedureId": "PROC_URINE_SAMPLES_PK_26",
+                "name": "Urine samples for PK26"
+            },
+            {
+                "procedureId": "PROC_AE_MONITORING_3",
+                "name": "AE monitoring3"
+            },
+            {
+                "procedureId": "PROC_CHECK_IN",
+                "name": "Check-in"
+            },
+            {
+                "procedureId": "PROC_CHECK_OUT",
+                "name": "Check-out"
+            }
+        ],
+        "scheduleItems": [],
+        "footnotes": [
+            {
+                "footnoteId": "1",
+                "procedureIds": [],
+                "text": "Eligibility to be reviewed and confirmed at screening and again on Day -1 (or Day 1, prior to dose administration)."
+            },
+            {
+                "footnoteId": "2",
+                "procedureIds": [],
+                "text": "Updated and reviewed against inclusion/exclusion criteria, prior to dose administration on Day 1."
+            },
+            {
+                "footnoteId": "3",
+                "procedureIds": [
+                    "PROC_PRIOR_CONCOMITANT_MEDICATIONS_3",
+                    "PROC_AE_MONITORING_3"
+                ],
+                "text": "To be recorded throughout the study."
+            },
+            {
+                "footnoteId": "4",
+                "procedureIds": [
+                    "PROC_HEIGHT_BMI_ABDOMINAL_GIRTH_4"
+                ],
+                "text": "Height to be measured at Screening only. Abdominal girth to be measured at Screening, Day 28 and EoS/ET. Body mass index to be auto-calculated in Medrio (based on height at Screening and weight on Day -1) at Screening, Day 28 and Eos/ET."
+            },
+            {
+                "footnoteId": "5",
+                "procedureIds": [
+                    "PROC_MRI_PDFF_5"
+                ],
+                "text": "Magnetic resonance imaging proton density fat fraction (MRI-PDFF) to be performed at screening and at EoS. A subsequent MRI may be performed if indicated by liver function test results."
+            },
+            {
+                "footnoteId": "6",
+                "procedureIds": [
+                    "PROC_SERUM_PREGNANCY_TEST_6"
+                ],
+                "text": "Females of childbearing potential only."
+            },
+            {
+                "footnoteId": "7",
+                "procedureIds": [
+                    "PROC_URINE_PREGNANCY_TEST_7"
+                ],
+                "text": "If the urine test is positive, pregnancy will be confirmed by a serum pregnancy test. Testing must be performed, and confirmed negative, prior to dose administration on Day 1."
+            },
+            {
+                "footnoteId": "8",
+                "procedureIds": [
+                    "PROC_SEROLOGY_LKM_ANTIBODY_8"
+                ],
+                "text": "Participants with a positive hepatitis B surface antigen, hepatitis C virus antibody or human immunodeficiency antibody test will not be eligible to participate in the study. Investigators must ensure compliance with local governing legislation and reporting requirements associated with communicable diseases.\nLiver Kidney Microsomal Autoantibody to be measured at Screening only."
+            },
+            {
+                "footnoteId": "9",
+                "procedureIds": [
+                    "PROC_FSH_9"
+                ],
+                "text": "For females reporting as post-menopausal at screening only."
+            },
+            {
+                "footnoteId": "10",
+                "procedureIds": [
+                    "PROC_COVID19_TEST_10"
+                ],
+                "text": "COVID-19 PCR or RAT at Screening and Day -1, and only if clinically indicated during the study following Site SOP's. (If symptomatic, participant will be asked not to present at clinical unit, in which case no RAT or PCR will be performed)."
+            },
+            {
+                "footnoteId": "11",
+                "procedureIds": [
+                    "PROC_URINE_DRUG_SCREEN_11"
+                ],
+                "text": "Assessment may be repeated once, at the discretion of the PI (or designee), in the instance of a positive result. If a positive result is confirmed, participants will not be eligible to continue."
+            },
+            {
+                "footnoteId": "12",
+                "procedureIds": [
+                    "PROC_ALCOHOL_BREATH_TEST_12"
+                ],
+                "text": "Participants who return a positive result will not be eligible to continue."
+            },
+            {
+                "footnoteId": "13",
+                "procedureIds": [
+                    "PROC_FULL_PHYSICAL_EXAM_13",
+                    "PROC_SYMPTOM_DIRECTED_PHYSICAL_EXAM_13"
+                ],
+                "text": "Full physical examination at screening and EoS, will include (at a minimum) assessment of the following: general appearance, head, ears, eyes, nose and throat, neck (including thyroid and lymph nodes), respiratory system, cardiovascular system, gastrointestinal system, renal system, neurological condition, musculoskeletal system, skin and any other focused assessments suggested by the presence of specific symptoms.\nSymptom-directed physical examination to be conducted if deemed necessary by the PI (or designee). Examination to include focused assessments as suggested by the presence of specific symptoms."
+            },
+            {
+                "footnoteId": "14",
+                "procedureIds": [
+                    "PROC_LOCAL_TOLERABILITY_14"
+                ],
+                "text": "Tolerability at the treatment site will be assessed. On Day 1 local tolerability assessments will be performed at 0.25, 0.5 and 1 hour post-dose (± 5 min). All other local tolerability assessments will be performed at any time on the indicated study days. Participant reporting on local tolerability will be captured as solicited local injection site reaction data collected during the 7 days following each administration of study treatment."
+            },
+            {
+                "footnoteId": "15",
+                "procedureIds": [
+                    "PROC_VITAL_SIGNS_15"
+                ],
+                "text": "Participants should be resting in a supine or semi-supine position for at least 5 minutes prior to and during vital signs measurements. Vital signs assessments to include blood pressure, pulse, respiratory rate, tympanic or infrared temperature and oxygen saturation. Vital signs are to be performed at the timepoints and windows stated in [Table](416 0 R) [22-K](417 0 R) Additional vital signs assessments may be performed at any time during the study as required, at the discretion of the PI (or designee)."
+            },
+            {
+                "footnoteId": "16",
+                "procedureIds": [
+                    "PROC_TELEMETRY_16"
+                ],
+                "text": "Continuous real-time 12-lead telemetry for surveillance of participant safety will be conducted. Telemetry monitoring will commence at least 1 hr pre-dose and will continue to at least 24 hr post-dose. Telemetry monitoring may be interrupted for showering.\nA 12-lead ECG will be performed if abnormalities (determined to be clinically significant by the PI or designee) are observed during the continuous telemetry monitoring."
+            },
+            {
+                "footnoteId": "17",
+                "procedureIds": [
+                    "PROC_12_LEAD_ECG_17"
+                ],
+                "text": "All ECGs will be performed in triplicate, to be conducted within 5 minutes with each recording at least 1 minute apart. ECGs will be taken after participants have been resting quietly in a supine or semi-supine position for at least 5 minutes. ECG assessments are to be taken at the timepoints and windows stated in [Table 22-K.](418 0 R) Additional ECGs may be performed at any time during the study as required, at the discretion of the PI (or designee)."
+            },
+            {
+                "footnoteId": "18",
+                "procedureIds": [
+                    "PROC_SAFETY_BLOOD_SAMPLES_18"
+                ],
+                "text": "Safety laboratory blood samples to be collected within 2 hours prior to dosing. Samples collected on Day -1 must be reviewed by the PI (or designee) prior to dose administration on Day 1 to confirm eligibility. Additional unscheduled safety laboratory assessments may be conducted at any time during the study as required, at the discretion of the PI (or designee)."
+            },
+            {
+                "footnoteId": "19",
+                "procedureIds": [
+                    "PROC_URINALYSIS_19"
+                ],
+                "text": "Urinalysis samples to be collected within 2 hours prior to dosing. Samples collected on Day -1 must be reviewed by the PI (or designee) prior to dose administration on Day 1 to confirm eligibility."
+            },
+            {
+                "footnoteId": "20",
+                "procedureIds": [
+                    "PROC_RANDOMIZATION_20"
+                ],
+                "text": "Randomization (allocation to OLX75016 or placebo) to be performed following final confirmation of eligibility, prior to dose administration on Day 1."
+            },
+            {
+                "footnoteId": "21",
+                "procedureIds": [
+                    "PROC_STUDY_DRUG_ADMINISTRATION_21"
+                ],
+                "text": "OLX75016 and placebo will be administered SC, doses will be administered in the clinic, under the supervision of site staff.\nParticipants in the optional Cohort 6 ONLY will receive pre-medications of 1000 mg paracetamol and 4 mg ibuprofen 30 minutes prior to dose administration. (Dexamethasone [4 mg, IV or orally (IV preferred)] may also be administered to the rest of cohort at the discretion of the PI)."
+            },
+            {
+                "footnoteId": "22",
+                "procedureIds": [
+                    "PROC_BLOOD_SAMPLES_PK_22"
+                ],
+                "text": "Refer to [Table 22-F](420 0 R) for plasma PK timepoints and allowable windows."
+            },
+            {
+                "footnoteId": "23",
+                "procedureIds": [
+                    "PROC_BLOOD_SAMPLES_IMMUNOGENICITY_23"
+                ],
+                "text": "Refer to [Table 22-F](421 0 R) [Table 22-F](422 0 R) for immunogenicity timepoints and allowable windows."
+            },
+            {
+                "footnoteId": "24",
+                "procedureIds": [
+                    "PROC_BLOOD_SAMPLES_INFLAMMATORY_MARKERS_24"
+                ],
+                "text": "Refer to [Table 22-F](423 0 R) [Table 22-F](424 0 R) for inflammation marker timepoints and allowable windows."
+            },
+            {
+                "footnoteId": "25",
+                "procedureIds": [
+                    "PROC_BLOOD_SAMPLES_METABOLIC_PANEL_25",
+                    "PROC_BLOOD_SAMPLES_CYTOKINES_25"
+                ],
+                "text": "Refer to [Table 22-F](425 0 R) [Table 22-F](426 0 R) for metabolic and cytokine timepoints and allowable windows.\nMetabolic samples (Triglycerides, total cholesterol [HDL and LDL] and glucose) are to be collected following an overnight fast of at least 8 hours (water is permitted)."
+            },
+            {
+                "footnoteId": "26",
+                "procedureIds": [
+                    "PROC_URINE_SAMPLES_PK_26"
+                ],
+                "text": "Refer to [Table 22-J](427 0 R) for urine PK timepoints and allowable windows."
+            },
+            {
+                "footnoteId": "27",
+                "procedureIds": [],
+                "text": "Participant to be cleared from safety standpoint by the PI (or designee), prior to discharge from the clinic."
+            },
+            {
+                "footnoteId": "28",
+                "procedureIds": [],
+                "text": "Assessments to be performed only in the instance of an early termination visit, if appropriate."
+            }
+        ]
+    },
+    "id": "3c3273f8-90ea-4861-a41d-4fabd073af9d",
+    "requestId": "3d5acc0a-6858-4f2b-a5f9-9a3584f04d6c",
+    "type": "SoaExtractionData",
+    "_rid": "d0QkAPfXPW-BAAAAAAAAAA==",
+    "_self": "dbs/d0QkAA==/colls/d0QkAPfXPW8=/docs/d0QkAPfXPW-BAAAAAAAAAA==/",
+    "_etag": "\"5000c61e-0000-1a00-0000-6ab49ab70000\"",
+    "_attachments": "attachments/",
+    "_ts": 1790220983
+}

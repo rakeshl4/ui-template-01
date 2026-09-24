@@ -1,16 +1,28 @@
-import { Check } from 'lucide-react'
-import { STATUSES } from '@/lib/constants'
+import { Check, X } from 'lucide-react'
 import { cn, formatDateTime } from '@/lib/utils'
 import type { Request } from '@/features/requests/schema'
 
+type Status = Request['status']
+
+const HAPPY_PATH: Status[] = ['Submitted', 'In Progress', 'Ready', 'Approved']
+// A failed extraction ends the flow after 'In Progress'.
+const FAILED_PATH: Status[] = ['Submitted', 'In Progress', 'Failed']
+
 export function StatusTimeline({ request }: { request: Request }) {
-  const steps = STATUSES
+  const steps = request.status === 'Failed' ? FAILED_PATH : HAPPY_PATH
   const currentIndex = steps.indexOf(request.status)
 
   return (
     <ol className="space-y-4">
       {steps.map((step, index) => {
-        const state = index < currentIndex ? 'complete' : index === currentIndex ? 'current' : 'upcoming'
+        const state =
+          index < currentIndex
+            ? 'complete'
+            : index === currentIndex
+              ? step === 'Failed'
+                ? 'failed'
+                : 'current'
+              : 'upcoming'
         return (
           <li key={step} className="flex items-start gap-3">
             <span
@@ -18,10 +30,17 @@ export function StatusTimeline({ request }: { request: Request }) {
                 'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
                 state === 'complete' && 'border-secondary-500 bg-secondary-500 text-white',
                 state === 'current' && 'border-primary-500 bg-primary-500 text-white',
+                state === 'failed' && 'border-destructive bg-destructive text-white',
                 state === 'upcoming' && 'border-input bg-background text-muted-foreground',
               )}
             >
-              {state === 'complete' ? <Check className="size-3.5" /> : index + 1}
+              {state === 'complete' ? (
+                <Check className="size-3.5" />
+              ) : state === 'failed' ? (
+                <X className="size-3.5" />
+              ) : (
+                index + 1
+              )}
             </span>
             <div className="space-y-0.5 pt-0.5">
               <p

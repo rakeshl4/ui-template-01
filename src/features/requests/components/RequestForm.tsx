@@ -88,7 +88,7 @@ export function RequestForm({ onSubmit }: RequestFormProps) {
                 <FormItem className="md:col-span-2">
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea rows={5} {...field} />
+                    <Textarea rows={5} placeholder="Describe the " {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,7 +99,7 @@ export function RequestForm({ onSubmit }: RequestFormProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Protocol PDF</CardTitle>
+            <CardTitle>Protocol Document</CardTitle>
           </CardHeader>
           <CardContent>
             <FormField

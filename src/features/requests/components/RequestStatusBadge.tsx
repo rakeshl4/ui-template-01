@@ -8,6 +8,7 @@ const STATUS_STYLES: Record<Status, string> = {
   'In Progress': 'bg-primary-50 text-primary-700 border-primary-200',
   Ready: 'bg-amber-50 text-amber-700 border-amber-200',
   Approved: 'bg-secondary-50 text-secondary-700 border-secondary-200',
+  Failed: 'bg-red-50 text-red-700 border-red-200',
 }
 
 export function RequestStatusBadge({ status }: { status: Status }) {

@@ -6,14 +6,12 @@ import {
   extractionTiming,
   requests,
 } from '@/mocks/data'
-import type {
-  SoaExtractionRequestDto,
-  SoaTableExtractionResultDto,
-} from '@/features/requests/api/dto'
-import type { Request, SoaExtraction, SoaFootnote } from '@/features/requests/schema'
+import type { SoaExtractionRequestDto, SoaTableDto } from '@/features/requests/api/dto'
+import type { Request } from '@/features/requests/schema'
 
-// Mirrors the hosted SOA API (OpenAPI spec: /openapi/v1.json). Internal state stays in the UI's
-// shape and is serialised to the API's DTOs on the way out, so the real adapters run in tests.
+// Mirrors the hosted SOA API (OpenAPI spec: /openapi/v1.json). Requests are kept in the UI's shape
+// and serialised on the way out; extraction records are stored as the API returns them. Either
+// way the real adapters run in tests.
 const RESOURCE = `${import.meta.env.VITE_API_BASE_URL}/api/protocol-docs`
 
 function randomDelay() {
@@ -33,11 +31,13 @@ function nextId(): string {
 function setRequestStatus(id: string, status: Request['status']) {
   const index = requests.findIndex((r) => r.id === id)
   if (index === -1) return
-  requests[index] = { ...requests[index], status, updatedAt: new Date().toISOString() }
-}
-
-function documentId(requestId: string) {
-  return `${requestId}-D1`
+  // The error only describes the failed run, so any other status clears it.
+  requests[index] = {
+    ...requests[index],
+    status,
+    error: status === 'Failed' ? requests[index].error : undefined,
+    updatedAt: new Date().toISOString(),
+  }
 }
 
 function toRequestDto(r: Request): SoaExtractionRequestDto {
@@ -49,6 +49,7 @@ function toRequestDto(r: Request): SoaExtractionRequestDto {
     description: r.description ?? null,
     submittedDate: r.createdAt,
     status: r.status,
+    error: r.error ?? null,
     documentSections: [],
     documents: (r.attachments ?? []).map((a, i) => ({
       id: `${r.id}-D${i + 1}`,
@@ -62,32 +63,12 @@ function toRequestDto(r: Request): SoaExtractionRequestDto {
   }
 }
 
-function toResultDtos(extraction: SoaExtraction): SoaTableExtractionResultDto[] {
-  return extraction.tables.map((t) => ({
-    id: t.id,
-    requestId: extraction.requestId,
-    type: 'Data',
-    documentId: documentId(extraction.requestId),
-    extractedDate: extraction.extractedAt,
-    soaTable: {
-      caption: t.title,
-      visits: Array.from({ length: t.columnCount }, (_, i) => ({ visitId: `VISIT_${i + 1}` })),
-      procedures: Array.from({ length: t.rowCount }, (_, i) => ({
-        procedureId: `PROC_${i + 1}`,
-        name: `Procedure ${i + 1}`,
-      })),
-      scheduleItems: [],
-      footnotes: t.footnotes.map((f) => ({ footnoteId: f.marker, procedureIds: [], text: f.text })),
-    },
-  }))
-}
-
 /** Completes a mock extraction once its duration has elapsed by moving the request to 'Ready'. */
 function settleExtractions() {
   for (const [id, run] of extractionStarts) {
     if (Date.now() - run.startedAt < extractionTiming.durationMs) continue
     extractionStarts.delete(id)
-    extractions.set(id, buildExtraction(id, run.runId, new Date().toISOString()))
+    extractions.set(id, buildExtraction(id, new Date().toISOString()))
     setRequestStatus(id, 'Ready')
   }
 }
@@ -145,10 +126,7 @@ export const handlers = [
     const id = params.id as string
     if (!requests.some((r) => r.id === id)) return error('Protocol document not found', 404, id)
 
-    extractionStarts.set(id, {
-      runId: `RUN-${id.replace('REQ-', '')}-${Date.now()}`,
-      startedAt: Date.now(),
-    })
+    extractionStarts.set(id, { startedAt: Date.now() })
     setRequestStatus(id, 'In Progress')
     return HttpResponse.json({ requestId: id })
   }),
@@ -164,27 +142,28 @@ export const handlers = [
     return HttpResponse.json({ requestId: id })
   }),
 
-  http.get(`${RESOURCE}/:id/results`, async ({ params }) => {
+  http.get(`${RESOURCE}/:id/extraction`, async ({ params }) => {
     await randomDelay()
     settleExtractions()
     const id = params.id as string
     const found = extractions.get(id)
     if (!found) return error('Extraction not found.', 404, id)
-    return HttpResponse.json(toResultDtos(found))
+    return HttpResponse.json(found)
   }),
 
-  // Placeholder: the hosted API has no endpoint for saving edited footnotes yet.
-  http.put(`${RESOURCE}/:id/results/:tableId`, async ({ params, request }) => {
+  // Placeholder: the hosted API has no endpoint for saving an edited table yet.
+  // Replaces the record's soaTable and returns the updated record.
+  http.put(`${RESOURCE}/:id/extraction/:tableId`, async ({ params, request }) => {
     await randomDelay()
-    const extraction = extractions.get(params.id as string)
-    const table = extraction?.tables.find((t) => t.id === params.tableId)
-    if (!extraction || !table) return error('Table not found', 404)
-    const { footnotes } = (await request.json()) as { footnotes: SoaFootnote[] }
-    const updated = { ...table, footnotes }
-    extractions.set(extraction.requestId, {
-      ...extraction,
-      tables: extraction.tables.map((t) => (t.id === table.id ? updated : t)),
-    })
+    const id = params.id as string
+    const records = extractions.get(id)
+    const record = records?.find((r) => r.id === params.tableId)
+    if (!records || !record) return error('Table not found', 404, id)
+    const updated = { ...record, soaTable: (await request.json()) as SoaTableDto }
+    extractions.set(
+      id,
+      records.map((r) => (r.id === record.id ? updated : r)),
+    )
     return HttpResponse.json(updated)
   }),
 ]

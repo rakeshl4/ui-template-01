@@ -19,6 +19,8 @@ export interface SoaExtractionRequestDto {
   description?: string | null
   submittedDate: string
   status?: string | null
+  /** Why the extraction failed; set only while status is 'Failed'. */
+  error?: string | null
   documentSections?: string[] | null
   documents: DocumentInfoDto[]
 }

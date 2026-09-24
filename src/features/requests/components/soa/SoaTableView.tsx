@@ -5,19 +5,23 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import type { SoaFootnote, SoaTable } from '@/features/requests/schema'
 import { SoaFootnotesEditor } from '@/features/requests/components/soa/SoaFootnotesEditor'
-import { SoaGridPlaceholder } from '@/features/requests/components/soa/SoaGridPlaceholder'
+import { SoaGrid } from '@/features/requests/components/soa/SoaGrid'
+import { toggleCell } from '@/features/requests/utils/schedule'
 
 interface SoaTableViewProps {
   table: SoaTable
   position: number
   total: number
   footnotes: SoaFootnote[]
+  scheduleItems: string[]
   dirty: boolean
   saving: boolean
   /** Disables editing, e.g. while a re-extraction is about to replace the tables. */
   locked?: boolean
   showErrors: boolean
   onFootnotesChange: (footnotes: SoaFootnote[]) => void
+  /** Receives an updater so rapid toggles never read a stale schedule. */
+  onScheduleChange: (update: (scheduleItems: string[]) => string[]) => void
   onPrev: () => void
   onNext: () => void
 }
@@ -27,11 +31,13 @@ export function SoaTableView({
   position,
   total,
   footnotes,
+  scheduleItems,
   dirty,
   saving,
   locked = false,
   showErrors,
   onFootnotesChange,
+  onScheduleChange,
   onPrev,
   onNext,
 }: SoaTableViewProps) {
@@ -83,11 +89,19 @@ export function SoaTableView({
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <SoaGridPlaceholder />
+        <SoaGrid
+          key={table.id}
+          table={table}
+          scheduleItems={scheduleItems}
+          footnotes={footnotes}
+          disabled={saving || locked}
+          onToggle={(key) => onScheduleChange((items) => toggleCell(items, key))}
+        />
         <Separator />
         <SoaFootnotesEditor
           key={table.id}
           tableId={table.id}
+          procedures={table.procedures}
           footnotes={footnotes}
           onChange={onFootnotesChange}
           showErrors={showErrors}
