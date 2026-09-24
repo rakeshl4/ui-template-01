@@ -12,6 +12,7 @@ import { DeleteRequestButton } from '@/features/requests/components/DeleteReques
 import { RequestDetailCard } from '@/features/requests/components/RequestDetailCard'
 import { RequestDocumentsCard } from '@/features/requests/components/RequestDocumentsCard'
 import { ScheduleOfAssessmentsCard } from '@/features/requests/components/ScheduleOfAssessmentsCard'
+import { StartExtractionButton } from '@/features/requests/components/StartExtractionButton'
 import { RequestStatusBadge } from '@/features/requests/components/RequestStatusBadge'
 import { formatDateTime } from '@/lib/utils'
 
@@ -82,6 +83,7 @@ export function ViewRequestPage() {
         actions={
           <div className="flex items-center gap-2">
             <ApproveRequestButton request={request} />
+            <StartExtractionButton request={request} variant="outline" />
             <DeleteRequestButton request={request} />
           </div>
         }
