@@ -217,8 +217,6 @@ export async function getExtraction(requestId: string): Promise<SoaExtraction> {
   return toExtraction(requestId, await handleResponse<SoaTableExtractionResultDto[]>(res))
 }
 
-// TODO: the API has no endpoint for saving an edited table yet; the path below is a placeholder.
-// Sends the whole soaTable; the server replaces the stored one and returns the updated record.
 export async function updateTable(requestId: string, table: SoaTable): Promise<SoaTable> {
   const res = await fetch(
     `${RESOURCE}/${encodeURIComponent(requestId)}/extraction/${encodeURIComponent(table.id)}`,
@@ -228,5 +226,6 @@ export async function updateTable(requestId: string, table: SoaTable): Promise<S
       body: JSON.stringify(toSoaTableDto(table)),
     },
   )
-  return toSoaTable(await handleResponse<SoaTableExtractionResultDto>(res), table.index)
+  if (!res.ok) await handleResponse<never>(res)
+  return table
 }

@@ -90,7 +90,7 @@ export function SoaTableView({
 
       <CardContent className="space-y-6">
         <SoaGrid
-          key={table.id}
+          key={`${table.id}-grid`}
           table={table}
           scheduleItems={scheduleItems}
           footnotes={footnotes}
@@ -99,10 +99,11 @@ export function SoaTableView({
         />
         <Separator />
         <SoaFootnotesEditor
-          key={table.id}
+          key={`${table.id}-footnotes`}
           tableId={table.id}
           procedures={table.procedures}
           footnotes={footnotes}
+          savedFootnotes={table.footnotes}
           onChange={onFootnotesChange}
           showErrors={showErrors}
           disabled={saving || locked}

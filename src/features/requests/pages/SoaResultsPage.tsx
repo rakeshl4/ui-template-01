@@ -16,7 +16,7 @@ import { UnsavedChangesGuard } from '@/features/requests/components/UnsavedChang
 import { SoaTableNav, SoaTableSelect } from '@/features/requests/components/soa/SoaTableNav'
 import { SoaTableView } from '@/features/requests/components/soa/SoaTableView'
 import type { SoaFootnote, SoaTable } from '@/features/requests/schema'
-import { footnotesEqual } from '@/features/requests/utils/footnotes'
+import { footnotesEqual, invalidFootnoteIds } from '@/features/requests/utils/footnotes'
 import { scheduleEqual } from '@/features/requests/utils/schedule'
 
 /** The editable parts of a table: which cells are scheduled, and footnote text. */
@@ -26,6 +26,8 @@ interface TableDraft {
 }
 
 type Drafts = Record<string, TableDraft>
+
+type SaveResult = 'saved' | 'invalid' | 'error'
 
 function draftOf(table: SoaTable, drafts: Drafts): TableDraft {
   return drafts[table.id] ?? { footnotes: table.footnotes, scheduleItems: table.scheduleItems }
@@ -149,13 +151,13 @@ export function SoaResultsPage() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [activeIndex, goTo])
 
-  async function saveTable(tableId: string): Promise<boolean> {
+  async function saveTable(tableId: string): Promise<SaveResult> {
     const draft = drafts[tableId]
     const table = tables.find((t) => t.id === tableId)
-    if (!draft || !table) return true
-    if (draft.footnotes.some((f) => f.text.trim().length === 0)) {
+    if (!draft || !table) return 'saved'
+    if (invalidFootnoteIds(draft.footnotes, table.footnotes).size > 0) {
       setShowErrorsFor((prev) => new Set(prev).add(tableId))
-      return false
+      return 'invalid'
     }
     setSavingIds((prev) => new Set(prev).add(tableId))
     try {
@@ -166,12 +168,12 @@ export function SoaResultsPage() {
         next.delete(tableId)
         return next
       })
-      return true
+      return 'saved'
     } catch (err) {
       toast.error('Could not save changes', {
         description: err instanceof Error ? err.message : undefined,
       })
-      return false
+      return 'error'
     } finally {
       setSavingIds((prev) => {
         const next = new Set(prev)
@@ -184,14 +186,15 @@ export function SoaResultsPage() {
   async function saveAll() {
     const ids = [...dirtyIds]
     const results = await Promise.all(ids.map((tableId) => saveTable(tableId)))
-    const failed = ids.filter((_, i) => !results[i])
+    const failed = ids.filter((_, i) => results[i] !== 'saved')
     if (failed.length === 0) {
       toast.success(`Changes saved for ${ids.length} table${ids.length === 1 ? '' : 's'}`)
-    } else {
+    } else if (results.includes('invalid')) {
+      // Server errors already raised their own toast in saveTable.
       toast.error(`${failed.length} table${failed.length === 1 ? '' : 's'} could not be saved`, {
         description: 'Check for empty footnotes.',
       })
-      selectTable(failed[0])
+      selectTable(ids[results.indexOf('invalid')])
     }
   }
 

@@ -1,13 +1,19 @@
 import { useMemo } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import type { SoaFootnote, SoaProcedure } from '@/features/requests/schema'
-import { footnoteDomId, procedureDisplayName } from '@/features/requests/utils/footnotes'
+import {
+  footnoteDomId,
+  invalidFootnoteIds,
+  procedureDisplayName,
+} from '@/features/requests/utils/footnotes'
 
 interface SoaFootnotesEditorProps {
   tableId: string
   /** Used to name the activities each footnote applies to. */
   procedures: SoaProcedure[]
   footnotes: SoaFootnote[]
+  /** Last saved footnotes; ones that were already empty aren't flagged as errors. */
+  savedFootnotes: SoaFootnote[]
   onChange: (footnotes: SoaFootnote[]) => void
   showErrors?: boolean
   disabled?: boolean
@@ -18,6 +24,7 @@ export function SoaFootnotesEditor({
   tableId,
   procedures,
   footnotes,
+  savedFootnotes,
   onChange,
   showErrors = false,
   disabled = false,
@@ -37,6 +44,11 @@ export function SoaFootnotesEditor({
     )
   }, [procedures, footnotes])
 
+  const invalidIds = useMemo(
+    () => invalidFootnoteIds(footnotes, savedFootnotes),
+    [footnotes, savedFootnotes],
+  )
+
   function updateText(id: string, text: string) {
     onChange(footnotes.map((f) => (f.id === id ? { ...f, text } : f)))
   }
@@ -54,7 +66,7 @@ export function SoaFootnotesEditor({
       ) : (
         <ol className="space-y-2">
           {footnotes.map((f) => {
-            const invalid = showErrors && f.text.trim().length === 0
+            const invalid = showErrors && invalidIds.has(f.id)
             const appliesTo = f.procedureIds
               .map((id) => procedureNames.get(id))
               .filter((name): name is string => Boolean(name))

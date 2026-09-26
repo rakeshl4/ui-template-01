@@ -54,6 +54,19 @@ export function procedureDisplayName(name: string, markers: string[]): string {
   return result
 }
 
+/**
+ * Ids of footnotes the user has blanked out or added without text. Footnotes that arrived empty from
+ * extraction and were left alone are not flagged, so they can't block saving unrelated edits.
+ */
+export function invalidFootnoteIds(draft: SoaFootnote[], saved: SoaFootnote[]): Set<string> {
+  const savedText = new Map(saved.map((f) => [f.id, f.text]))
+  return new Set(
+    draft
+      .filter((f) => f.text.trim().length === 0 && (savedText.get(f.id) ?? '').trim().length > 0)
+      .map((f) => f.id),
+  )
+}
+
 export function footnotesEqual(a: SoaFootnote[], b: SoaFootnote[]): boolean {
   return (
     a.length === b.length &&
